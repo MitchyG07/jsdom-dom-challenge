@@ -3,15 +3,16 @@
 let counter = document.querySelector('#counter')
 let countInt = 0  
 let clock = setInterval(incrementSecond, 1000)
-
-let likes = document.querySelector('#likes')
-
+let life = true
 
 
-function countSeconds() { 
-   clock
+//comment to the DOM 
+function postComment(comment) {
+    let div = document.querySelector("#list")
+    let p = document.createElement('p')
+    p.textContent = comment.content
+    div.appendChild(p)
 }
-
 //increment counter grabs the countInt and increments the second 
 function incrementSecond() {
     countInt += 1
@@ -25,14 +26,44 @@ function decrementSecond() {
 }
 
 function pauseCount() {
-    clearInterval(clock);
-    document.querySelector('#pause').textContent = 'resume'
-    document.querySelector('#pause').addEventListener('click', resumeCount)
+    if (life) {
+        clearInterval(clock);
+        document.querySelector('#pause').textContent = 'resume'
+        life = false
+    } 
+    else {
+       clock = setInterval(incrementSecond, 1000)
+       document.querySelector('#pause').textContent = 'pause'
+       life = true
+    }
 }
 
-function resumeCount() {
-    clock = setInterval(incrementSecond, 1000)
-    document.querySelector('#pause').textContent = 'pause'
+//handler for making a comment 
+function makeComment(e) {
+    e.preventDefault()
+    let newComment = {
+        "content": e.target.comment.value
+    }
+    postComment(newComment)
+}
+
+let like = {}
+
+function addLike() {
+    let ul = document.querySelector('.likes')
+    // let countInteger = countInt
+    if (like[countInt]) {
+        like[countInt] ++
+        let li = document.getElementById(`${countInt}`)
+        li.textContent = `${countInt} has ${like[countInt]} like(s)!`
+    }
+    else {
+        like[countInt] = 1 
+        let li = document.createElement('li')
+        li.textContent = `${countInt} has ${like[countInt]} like(s)!`
+        li.id = `${countInt}`
+        ul.appendChild(li)
+    }  
 }
 
 //incrementing listener 
@@ -41,6 +72,9 @@ document.querySelector('#plus').addEventListener('click', incrementSecond)
 document.querySelector('#minus').addEventListener('click', decrementSecond)
 //grabs the pause button
 document.querySelector('#pause').addEventListener('click', pauseCount)
+//grabs the comment
+document.querySelector('#comment-form').addEventListener('submit', makeComment)
+document.querySelector('#heart').addEventListener('click',addLike)
 
 
 
